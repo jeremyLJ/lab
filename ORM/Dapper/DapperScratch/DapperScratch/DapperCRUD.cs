@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using Dapper;
 
 namespace DapperScratch
@@ -37,6 +38,22 @@ namespace DapperScratch
                 new { UserName = userName + "%" });
 
             return result;
+        }
+
+        public void UpdateUser(int userId, string userName)
+        {
+            connection.Execute("update Users set UserName=@UserName where UserID=@UserID", new {UserID=userId, UserName = userName});
+        }
+
+        public void Delete(int userId)
+        {
+            connection.Execute("delete from Users where UserID=@userId", new {UserID = userId});
+        }
+
+        public Users[] InClause()
+        {
+            var query = "select * from Uses where Email in @Email";
+            return connection.Query<Users>(query, new { Email in }).ToArray();
         }
     }
 

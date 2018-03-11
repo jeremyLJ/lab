@@ -41,5 +41,34 @@ namespace Test.DapperScratch
             Assert.Equal(10, bulkInsertResults.Count());
             Assert.True(bulkInsertResults.All(u => u.UserName.Contains(testUserName)));
         }
+
+        [Fact]
+        public void TestUpdate()
+        {
+            var testUserName = $"JeremyLiu_{DateTime.Now.Ticks}";
+
+            dapperCrud.SingleInsert(testUserName, "dapper@test.com", "dummy address");
+            var insertResult = dapperCrud.QueryByUserName(testUserName).SingleOrDefault();
+            
+            var updateUserName = $"JeremyLiu_update_{DateTime.Now.Ticks}";
+            dapperCrud.UpdateUser(insertResult.UserID, updateUserName);
+
+            var updateResult = dapperCrud.QueryByUserName(updateUserName).SingleOrDefault();
+            Assert.NotNull(updateResult);
+        }
+
+        [Fact]
+        public void TestDelete()
+        {
+            var testUserName = $"JeremyLiu_{DateTime.Now.Ticks}";
+
+            dapperCrud.SingleInsert(testUserName, "dapper@test.com", "dummy address");
+            var insertResult = dapperCrud.QueryByUserName(testUserName).SingleOrDefault();
+
+            dapperCrud.Delete(insertResult.UserID);
+
+            var updateResult = dapperCrud.QueryByUserName(testUserName).FirstOrDefault();
+            Assert.Null(updateResult);
+        }
     }
 }
