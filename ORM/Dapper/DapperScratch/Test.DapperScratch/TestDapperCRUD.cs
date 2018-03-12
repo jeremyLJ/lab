@@ -49,7 +49,7 @@ namespace Test.DapperScratch
 
             dapperCrud.SingleInsert(testUserName, "dapper@test.com", "dummy address");
             var insertResult = dapperCrud.QueryByUserName(testUserName).SingleOrDefault();
-            
+
             var updateUserName = $"JeremyLiu_update_{DateTime.Now.Ticks}";
             dapperCrud.UpdateUser(insertResult.UserID, updateUserName);
 
@@ -69,6 +69,49 @@ namespace Test.DapperScratch
 
             var updateResult = dapperCrud.QueryByUserName(testUserName).FirstOrDefault();
             Assert.Null(updateResult);
+        }
+
+        [Fact]
+        public void TestInClauseSearch()
+        {
+            // Given
+            var testUserNameEmail = $"JeremyLiu@{DateTime.Now.Ticks}.com";
+            var newUsers = Enumerable.Range(0, 6).Select(i => new Users
+            {
+                UserName = $"JeremyLiu_{i}",
+                Email = testUserNameEmail,
+                Address = $"dummy address-{i}"
+            }).ToArray();
+            dapperCrud.BulkInsert(newUsers);
+
+            var testUserNameEmail2 = $"JeremyLiu@{DateTime.Now.Ticks}.com";
+            var newUsers2 = Enumerable.Range(0, 4).Select(i => new Users
+            {
+                UserName = $"JeremyLiu_{i}",
+                Email = testUserNameEmail2,
+                Address = $"dummy address-{i}"
+            });
+            dapperCrud.BulkInsert(newUsers2);
+
+            // When
+            var searchUsers = dapperCrud.InClause(new[] { testUserNameEmail, testUserNameEmail2 });
+
+            // Then
+            Assert.Equal(10, searchUsers.Length);
+
+            var testUser = searchUsers.Where(u => u.Email == testUserNameEmail);
+            var testUser2 = searchUsers.Where(u => u.Email == testUserNameEmail2);
+            Assert.Equal(6, testUser.Count());
+            Assert.Equal(4, testUser2.Count());
+        }
+
+        [Fact]
+        public void TestMultipleReader()
+        {
+            // Given
+
+            // When
+            // Then
         }
     }
 }

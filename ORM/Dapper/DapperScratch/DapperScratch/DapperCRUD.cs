@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -15,6 +16,14 @@ namespace DapperScratch
         {
             var affectedRows = connection.Execute("insert into Users values (@UserName, @Email, @Address)",
                                            new { UserName = userName, Email = email, Address = address });
+
+            return affectedRows;
+        }
+
+        public int SingleInsertProduct(string name, string description, DateTime createTime)
+        {
+            var affectedRows = connection.Execute("insert into Product values (@ProductName, @ProductDesc, @CreateTime)",
+                new { ProductName = name, ProductDesc = description, CreateTime = createTime });
 
             return affectedRows;
         }
@@ -50,11 +59,33 @@ namespace DapperScratch
             connection.Execute("delete from Users where UserID=@userId", new {UserID = userId});
         }
 
-        public Users[] InClause()
+        public Users[] InClause(IEnumerable<string> searchEmails)
         {
-            var query = "select * from Uses where Email in @Email";
-            return connection.Query<Users>(query, new { Email in }).ToArray();
+            var query = "select * from Users where Email in @Email";
+            return connection.Query<Users>(query, new { Email = searchEmails }).ToArray();
         }
+
+        public Tuple<List<Products>, List<Users>> MultipleReader()
+        {
+            var query = "select * from Product; select * from Users";
+            var multipleReader = connection.QueryMultiple(query);
+
+            var productList = multipleReader.Read<Products>();
+            var userList = multipleReader.Read<Users>();
+
+            multipleReader.Dispose();
+
+            return new Tuple<List<Products>, List<Users>>(productList.ToList(), userList.ToList());
+        }
+    }
+
+    public class Products
+    {
+        public int ProductID { get; set; }
+        public string ProductName { get; set; }
+        public string ProductDesc { get; set; }
+        public int UserID { get; set; }
+        public DateTime CreateTime { get; set; }
     }
 
     public class Users
