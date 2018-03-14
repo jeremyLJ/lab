@@ -22,8 +22,8 @@ namespace DapperScratch
 
         public int SingleInsertProduct(string name, string description, DateTime createTime)
         {
-            var affectedRows = connection.Execute("insert into Product values (@ProductName, @ProductDesc, @CreateTime)",
-                new { ProductName = name, ProductDesc = description, CreateTime = createTime });
+            var affectedRows = connection.Execute("insert into Product values (@ProductName, @ProductDesc, @UserID, @CreateTime)",
+                new { ProductName = name, ProductDesc = description, UserID = (int?)null, CreateTime = createTime });
 
             return affectedRows;
         }
@@ -51,12 +51,12 @@ namespace DapperScratch
 
         public void UpdateUser(int userId, string userName)
         {
-            connection.Execute("update Users set UserName=@UserName where UserID=@UserID", new {UserID=userId, UserName = userName});
+            connection.Execute("update Users set UserName=@UserName where UserID=@UserID", new { UserID = userId, UserName = userName });
         }
 
         public void Delete(int userId)
         {
-            connection.Execute("delete from Users where UserID=@userId", new {UserID = userId});
+            connection.Execute("delete from Users where UserID=@userId", new { UserID = userId });
         }
 
         public Users[] InClause(IEnumerable<string> searchEmails)
@@ -86,6 +86,23 @@ namespace DapperScratch
         public string ProductDesc { get; set; }
         public int UserID { get; set; }
         public DateTime CreateTime { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            var product = obj as Products;
+
+            return product.ProductName == this.ProductName && product.ProductDesc == this.ProductDesc && product.UserID == this.UserID;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ProductName.GetHashCode() ^ this.ProductDesc.GetHashCode() ^ this.UserID.GetHashCode();
+        }
     }
 
     public class Users
@@ -94,5 +111,22 @@ namespace DapperScratch
         public string UserName { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            var user = obj as Users;
+            
+            return user.UserName == this.UserName && user.Email == this.Email && user.Address == this.Address;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.UserName.GetHashCode() ^ this.Email.GetHashCode() ^ this.Address.GetHashCode();
+        }
     }
 }

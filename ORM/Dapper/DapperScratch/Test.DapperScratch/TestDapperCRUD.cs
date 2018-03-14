@@ -109,9 +109,26 @@ namespace Test.DapperScratch
         public void TestMultipleReader()
         {
             // Given
+            var originalResults = dapperCrud.MultipleReader();
+
+            var testUserName = $"JeremyLiu_{DateTime.Now.Ticks}";
+            dapperCrud.SingleInsert(testUserName, "dapper@test.com", "dummy address");
+
+            var testProductName = $"Product1_{DateTime.Now.Ticks}";
+            dapperCrud.SingleInsertProduct(testProductName, "product1 desc", DateTime.Now);
 
             // When
+            var searchResults = dapperCrud.MultipleReader();
+
             // Then
+            var productData = searchResults.Item1;
+            var userData = searchResults.Item2;
+
+            var newUser = userData.Except(originalResults.Item2).Single();
+            Assert.Equal(testUserName, newUser.UserName);
+
+            var newProduct = productData.Except(originalResults.Item1).Single();
+            Assert.Equal(testProductName, newProduct.ProductName);
         }
     }
 }
