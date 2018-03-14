@@ -20,10 +20,10 @@ namespace DapperScratch
             return affectedRows;
         }
 
-        public int SingleInsertProduct(string name, string description, DateTime createTime)
+        public int SingleInsertProduct(string name, string description, DateTime createTime, int? userId = null)
         {
             var affectedRows = connection.Execute("insert into Product values (@ProductName, @ProductDesc, @UserID, @CreateTime)",
-                new { ProductName = name, ProductDesc = description, UserID = (int?)null, CreateTime = createTime });
+                new { ProductName = name, ProductDesc = description, UserID = userId, CreateTime = createTime });
 
             return affectedRows;
         }
@@ -77,6 +77,30 @@ namespace DapperScratch
 
             return new Tuple<List<Products>, List<Users>>(productList.ToList(), userList.ToList());
         }
+
+        public Products[] JoinQuery(DateTime createTime)
+        {
+            var query = "select p.ProductName, p.CreateTime, u.UserName" +
+                        " from Product as p" +
+                        " join Users as u on p.UserID = u.UserID" +
+                        " where p.CreateTime > @CreateTime";
+
+            var result = connection.Query<Products, Users, Products>(query, (product, user) =>
+            {
+                product.UserOwner = user;
+                return product;
+            }, new { CreateTime = createTime }, splitOn: "UserName");
+
+            return result.ToArray();
+        }
+
+        public Users[] StoreProcedureQuery(int userId)
+        {
+            var result = connection.Query<Users>("sp_GetUsers", new {id = userId},
+                commandType: CommandType.StoredProcedure);
+
+            return result.ToArray();
+        }
     }
 
     public class Products
@@ -84,7 +108,7 @@ namespace DapperScratch
         public int ProductID { get; set; }
         public string ProductName { get; set; }
         public string ProductDesc { get; set; }
-        public int UserID { get; set; }
+        public Users UserOwner { get; set; }
         public DateTime CreateTime { get; set; }
 
         public override bool Equals(object obj)
@@ -96,12 +120,12 @@ namespace DapperScratch
 
             var product = obj as Products;
 
-            return product.ProductName == this.ProductName && product.ProductDesc == this.ProductDesc && product.UserID == this.UserID;
+            return product.ProductName == this.ProductName && product.ProductDesc == this.ProductDesc;
         }
 
         public override int GetHashCode()
         {
-            return this.ProductName.GetHashCode() ^ this.ProductDesc.GetHashCode() ^ this.UserID.GetHashCode();
+            return this.ProductName.GetHashCode() ^ this.ProductDesc.GetHashCode();
         }
     }
 
@@ -120,7 +144,7 @@ namespace DapperScratch
             }
 
             var user = obj as Users;
-            
+
             return user.UserName == this.UserName && user.Email == this.Email && user.Address == this.Address;
         }
 

@@ -130,5 +130,46 @@ namespace Test.DapperScratch
             var newProduct = productData.Except(originalResults.Item1).Single();
             Assert.Equal(testProductName, newProduct.ProductName);
         }
+
+        [Fact]
+        public void TestJoinQuery()
+        {
+            // Given
+            var createTime = DateTime.Now;
+
+            var testUserName = $"JeremyLiu_{DateTime.Now.Ticks}";
+            dapperCrud.SingleInsert(testUserName, "dapper@test.com", "dummy address");
+
+            var newUser = dapperCrud.QueryByUserName(testUserName).SingleOrDefault();
+
+            var testProductName = $"Product1_{DateTime.Now.Ticks}";
+            dapperCrud.SingleInsertProduct(testProductName, "product1 desc", DateTime.Now, newUser.UserID);
+            var testProductName2 = $"Product2_{DateTime.Now.Ticks}";
+            dapperCrud.SingleInsertProduct(testProductName2, "product2 desc", DateTime.Now, newUser.UserID);
+
+
+            // When
+            var newProducts = dapperCrud.JoinQuery(createTime);
+
+            // Then
+            Assert.Equal(2, newProducts.Length);
+            Assert.True(newProducts.All(p => p.UserOwner.UserName == testUserName));
+        }
+
+        [Fact]
+        public void TestStoreProcedureQuery()
+        {
+            //Given
+            var testUserName = $"JeremyLiu_{DateTime.Now.Ticks}";
+            dapperCrud.SingleInsert(testUserName, "dapper@test.com", "dummy address");
+
+            var newUser = dapperCrud.QueryByUserName(testUserName).Single();
+
+            //When
+            var spQueriedUser = dapperCrud.StoreProcedureQuery(newUser.UserID).Single();
+
+            //Then
+            Assert.Equal(newUser, spQueriedUser);
+        }
     }
 }
