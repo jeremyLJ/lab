@@ -1,0 +1,19 @@
+﻿using System;
+
+namespace AutofacScratch
+{
+    public class TodayWriter : IDateWriter
+    {
+        private readonly IOutput _output;
+
+        public TodayWriter(IOutput output)
+        {
+            this._output = output;
+        }
+
+        public void WriteDate()
+        {
+            this._output.Write(DateTime.Today.ToShortDateString());
+        }
+    }
+}
