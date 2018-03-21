@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autofac;
 
 namespace AutofacScratch
@@ -19,6 +15,9 @@ namespace AutofacScratch
             Container = builder.Build();
 
             WriteDate();
+
+            Console.WriteLine("done...");
+            Console.Read();
         }
 
         private static void WriteDate()
