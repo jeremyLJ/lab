@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleOutput.cs" />
+    <Compile Include="EnumerationResolveServices.cs" />
     <Compile Include="IDateWriter.cs" />
     <Compile Include="IOutput.cs" />
     <Compile Include="Program.cs" />
