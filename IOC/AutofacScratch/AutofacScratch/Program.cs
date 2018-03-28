@@ -12,9 +12,15 @@ namespace AutofacScratch
             builder.RegisterType<ConsoleOutput>().As<IOutput>();
             builder.RegisterType<TodayWriter>().As<IDateWriter>();
 
+            //builder.RegisterGeneric(typeof(NHibernateRepository<>)).As(typeof(IRepository<>))
+            //    .InstancePerLifetimeScope();
+
             Container = builder.Build();
 
             WriteDate();
+
+            // Enumeration resolving services
+
 
             Console.WriteLine("done...");
             Console.Read();
