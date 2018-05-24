@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "6CountDownEvent", "6CountDo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7Barrier", "7Barrier\7Barrier.csproj", "{0B080D8E-0824-45D9-85D1-327CA7D4C6BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "8ReaderWriterLockSlim", "ReaderWriterLockSlim\8ReaderWriterLockSlim.csproj", "{8475FEA3-8E38-4406-894A-1FED7BE56F9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "9SpinWait", "9SpinWait\9SpinWait.csproj", "{66B6762A-D2A5-413A-B65E-B520BA1A199D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{0B080D8E-0824-45D9-85D1-327CA7D4C6BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B080D8E-0824-45D9-85D1-327CA7D4C6BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B080D8E-0824-45D9-85D1-327CA7D4C6BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8475FEA3-8E38-4406-894A-1FED7BE56F9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8475FEA3-8E38-4406-894A-1FED7BE56F9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8475FEA3-8E38-4406-894A-1FED7BE56F9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8475FEA3-8E38-4406-894A-1FED7BE56F9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66B6762A-D2A5-413A-B65E-B520BA1A199D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66B6762A-D2A5-413A-B65E-B520BA1A199D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66B6762A-D2A5-413A-B65E-B520BA1A199D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66B6762A-D2A5-413A-B65E-B520BA1A199D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
