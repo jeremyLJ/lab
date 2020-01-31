@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="Init" DefaultTargets="Run" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <BaseDir Condition=" '$(BaseDir)' == '' ">.</BaseDir>
+    <BuildVersion Condition=" '$(BuildVersion)' == '' ">1.0.0.0</BuildVersion>
+    <BuildProjectName>SUSSE.Web</BuildProjectName>
+    <BuildArtifactsDir>BuildArtifacts\$(BuildVersion)</BuildArtifactsDir>
+    <BuildProjectFile>$(BaseDir)\$(BuildProjectName)\SUSSE.Web.csproj"</BuildProjectFile>
+  </PropertyGroup>
+
+  <Target Name="Init" DependsOnTargets="Clean">
+    <MakeDir Directories="$(BuildArtifactsDir)" />
+  </Target>
+
+  <Target Name="Clean">
+    <RemoveDir Directories="$(BuildArtifactsDir)" />
+  </Target>
+
+  <Target Name="Run" DependsOnTargets="BuildPackage;CopyPackageFiles" />
+  
+  <Target Name="BuildPackage">
+    <Message Text="Start to build" />
+    <Message Text="Build Artifacts Path: %(BuildArtifactsDir.FullPath)" />
+    <Message Text="Build File Path: $(BuildProjectFile)" />
+    <MSBuild Projects="$(BuildProjectFile)" ContinueOnError="false" Targets="Rebuild"
+             Properties="DeployOnBuild=true;DeployTarget=Package;Configuration=$(Configuration);Platform=$(BuildPlatform);VisualStudioVersion=15.0" />
+  </Target>
+
+  <Target Name="CopyPackageFiles">
+    <ItemGroup>
+      <PackagedFiles Include="$(BaseDir)\$(BuildProjectName)\obj\Package\PackageTmp\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PackagedFiles)" DestinationFiles="@(PackagedFiles->'$(BuildArtifactsDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+</Project>

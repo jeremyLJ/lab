@@ -1,0 +1,7 @@
+﻿<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <connectionStrings>
+    <clear/>
+    <add name="ConnectionString" connectionString="server=rm-uf614k1z87p668dugo.sqlserver.rds.aliyuncs.com,3433;uid=test_susse_demo;pwd=123245#@FY232;database=susse20190110;"
+         xdt:Locator="Match(name)" xdt:Transform="Replace"/>
+  </connectionStrings>
+</configuration>

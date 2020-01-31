@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="Init" DefaultTargets="Run" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <BuildArtifactsDir Include="BuildArtifacts\$(BuildVersion)" />
+    <BuildProjectFile Include="$(BaseDir)\SUSSE.Web\SUSSE.Web.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <BuildVersion Condition=" '$(BuildVersion)' == '' ">1.0.0.0</BuildVersion>
+    <BaseDir Condition=" '$(BaseDir)' == '' ">.</BaseDir>
+  </PropertyGroup>
+
+  <Target Name="Init" DependsOnTargets="Clean">
+    <MakeDir Directories="@(BuildArtifactsDir)" />
+  </Target>
+
+  <Target Name="Clean">
+    <RemoveDir Directories="@(BuildArtifactsDir)" />
+  </Target>
+  <Target Name="Run">
+    <Message Text="Start to build" />
+    <Message Text="Build Artifacts Path: %(BuildArtifactsDir.FullPath)" />
+    <Message Text="Build File Path: @(BuildProjectFile)" />
+    <MSBuild Projects="@(BuildProjectFile)" Targets="Rebuild"
+          Properties="OutDir=%(BuildArtifactsDir.FullPath);Configuration=$(Configuration);Platform=$(BuildPlatform)" />
+  </Target>
+</Project>

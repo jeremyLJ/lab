@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="Init" DefaultTargets="Run" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildCommunityTasksTargets)"/>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <BuildFolder Condition=" '$(BuildFolder)' == '' ">D:\Deployments</BuildFolder>
+    <BuildVersion Condition=" '$(BuildVersion)' == '' ">1.0.0.0</BuildVersion>
+    <Product Condition=" '$(Product)' == '' ">PMS</Product>
+    <BuildProjectName>SUSSE.Web</BuildProjectName>
+    <BuildArtifactsDir>BuildArtifacts</BuildArtifactsDir>
+    <BuildProjectFile>$(BuildProjectName)\SUSSE.Web.csproj</BuildProjectFile>
+  </PropertyGroup>
+
+  <Target Name="Init" DependsOnTargets="Clean">
+    <MakeDir Directories="$(BuildArtifactsDir)" />
+  </Target>
+
+  <Target Name="Clean">
+    <RemoveDir Directories="$(BuildArtifactsDir)" />
+  </Target>
+
+  <Target Name="Run" DependsOnTargets="BuildPackage;TransformConfig;ZipPackageFiles" />
+
+  <Target Name="BuildPackage">
+    <Message Text="Start to build" />
+    <Message Text="Build Artifacts Path: $(BuildArtifactsDir)" />
+    <Message Text="Build File Path: $(BuildProjectFile)" />
+    <MSBuild Projects="$(BuildProjectFile)" ContinueOnError="false" Targets="Rebuild"
+             Properties="OutDir=$(BuildArtifactsDir);DeployOnBuild=true;DeployTarget=Package;Configuration=$(Configuration);VisualStudioVersion=15.0;AutoParameterizationWebConfigConnectionStrings=false" />
+  </Target>
+
+  <Target Name="InitVersion">
+    <MakeDir Directories="$(PackageArchieveFolder)" />
+  </Target>
+
+  <PropertyGroup>
+    <PackageFilesFolder>$(BuildProjectName)\obj\$(Configuration)\Package\PackageTmp</PackageFilesFolder>
+    <PackageArchieveFolder>$(BuildFolder)\$(Product)\$(Product)_$(BuildVersion)</PackageArchieveFolder>
+  </PropertyGroup>
+
+  <Target Name="CopyPackageFiles" DependsOnTargets="InitVersion">   
+    <Message Text="Create build version file" />
+    <WriteLinesToFile File="$(PackageFilesFolder)\build_version.txt" Lines="$(BuildVersion)" Overwrite="true" />
+  </Target>
+
+  <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v15.0\Web\Microsoft.Web.Publishing.Tasks.dll" />
+  <Target Name="TransformConfig">
+    <TransformXml Source="$(PackageFilesFolder)\Web.config"
+                  Transform="Transform.xml"
+                  Destination="$(PackageFilesFolder)\Web.config" />
+  </Target>
+
+  <Target Name="ZipPackageFiles" DependsOnTargets="CopyPackageFiles">
+    <ItemGroup>
+      <PackagedFiles Include="$(PackageFilesFolder)\**\*.*" />
+    </ItemGroup>
+
+    <Message Text="Build package verion path: $(PackageArchieveFolder)" />
+    <Message Text="Start to zip package files" />
+    <Zip Files="@(PackagedFiles)" WorkingDirectory="$(PackageFilesFolder)" ZipFileName="$(PackageArchieveFolder).zip" ZipLevel="9" />
+
+    <Message Text="Remove empty package version folder" />
+    <RemoveDir Directories="$(PackageArchieveFolder)" />
+  </Target>
+</Project>
